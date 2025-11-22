@@ -1,8 +1,14 @@
+
 import React, { useState } from 'react';
 import EventCard from './EventCard';
 import { MOCK_EVENTS, CATEGORIES } from '../constants';
+import { Event } from '../types';
 
-const EventGrid: React.FC = () => {
+interface EventGridProps {
+    onViewDetails?: (event: Event) => void;
+}
+
+const EventGrid: React.FC<EventGridProps> = ({ onViewDetails }) => {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const filteredEvents = selectedCategory === "All" 
@@ -45,6 +51,7 @@ const EventGrid: React.FC = () => {
               <EventCard 
                 key={event.id} 
                 event={event} 
+                onViewDetails={onViewDetails}
                 style={{ 
                     animation: `fadeIn 0.5s ease-out forwards`, 
                     animationDelay: `${index * 0.1}s`,

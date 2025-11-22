@@ -1,5 +1,5 @@
+
 import React from 'react';
-import Button from './Button';
 
 const SoundWave: React.FC = () => {
   // Generate 7 bars with different delays for random effect
@@ -23,7 +23,7 @@ const SoundWave: React.FC = () => {
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative w-full min-h-[650px] flex items-center justify-center overflow-hidden pt-[70px]">
+    <section className="relative w-full min-h-[500px] flex items-center justify-center overflow-hidden pt-[70px]">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-dark-bg">
         {/* Gradient Orb 1 */}
@@ -38,7 +38,7 @@ const Hero: React.FC = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col lg:flex-row items-center justify-between gap-12">
         
         {/* Text Content */}
-        <div className="flex-1 text-center lg:text-left space-y-8 max-w-2xl">
+        <div className="flex-1 text-center lg:text-left space-y-6 max-w-2xl">
           <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight animate-slide-up" style={{ animationDelay: '0.1s' }}>
             Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-neon-cyan">Music Events</span>
           </h1>
@@ -46,15 +46,6 @@ const Hero: React.FC = () => {
           <p className="text-lg md:text-xl text-text-secondary max-w-lg mx-auto lg:mx-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
             Join thousands of music lovers finding live performances, underground gigs, and massive festivals near you.
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-            <Button variant="primary">
-              Join the Movement
-            </Button>
-            <Button variant="secondary">
-              Browse Events
-            </Button>
-          </div>
         </div>
 
         {/* Visual Content / Sound Wave */}

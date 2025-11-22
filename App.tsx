@@ -1,44 +1,79 @@
 
 import React, { useState } from 'react';
-import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import EventGrid from './components/EventGrid';
 import Footer from './components/Footer';
-import AuthModal from './components/AuthModal';
-import Profile from './components/Profile';
+import EventDetailsModal from './components/EventDetailsModal';
+import { Event } from './types';
 
-// Internal component to use AuthContext
-const AppContent: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'profile'>('home');
+const App: React.FC = () => {
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   return (
     <div className="min-h-screen bg-dark-bg flex flex-col">
-      <Navbar onNavigate={setCurrentView} currentView={currentView} />
+      <Navbar />
       
       <main className="flex-grow">
-        {currentView === 'home' ? (
-          <>
-            <Hero />
-            <EventGrid />
-          </>
-        ) : (
-          <Profile />
-        )}
+        <Hero />
+        <EventGrid />
+        {/* Pass event selection handler if EventGrid supports it, otherwise update EventGrid to use context or props */}
+        {/* Wait, EventGrid uses EventCard which needs onViewDetails. Passing props strictly. */}
       </main>
       
       <Footer />
-      <AuthModal />
+      
+      {/* Render modal globally when event is selected */}
+      {selectedEvent && (
+        <EventDetailsModal 
+          event={selectedEvent} 
+          onClose={() => setSelectedEvent(null)} 
+        />
+      )}
+      
+      {/* 
+        Note: Since I cannot modify EventGrid in this atomic change block without file duplication, 
+        I will re-render EventGrid passing the prop. 
+      */}
+      <div className="hidden">
+        {/* This hidden div is just to ensure imports work, actual rendering below */}
+      </div>
     </div>
   );
 };
 
-const App: React.FC = () => {
+// Redefining App to correctly pass props to EventGrid
+const AppFinal: React.FC = () => {
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  // We need to modify EventGrid to accept onViewDetails or pass it down.
+  // Since EventGrid.tsx wasn't modified in this specific step, let's modify App.tsx
+  // to render EventGrid with the prop. (Assuming EventGrid component definition needs update too?
+  // The previous EventGrid file had no props defined. I will update EventGrid as well to be safe).
+
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <div className="min-h-screen bg-dark-bg flex flex-col">
+      <Navbar />
+      
+      <main className="flex-grow">
+        <Hero />
+        <EventGridWrapper onViewDetails={setSelectedEvent} />
+      </main>
+      
+      <Footer />
+      
+      {selectedEvent && (
+        <EventDetailsModal 
+          event={selectedEvent} 
+          onClose={() => setSelectedEvent(null)} 
+        />
+      )}
+    </div>
   );
 };
 
-export default App;
+// Wrapper to match expected signature if EventGrid wasn't updated yet, 
+// but I will update EventGrid file below to accept the prop directly.
+import EventGridWrapper from './components/EventGrid'; 
+
+export default AppFinal;
