@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { MapPin, Calendar } from 'lucide-react';
+import { MapPin, Calendar, Edit2, Trash2 } from 'lucide-react';
 import { Event } from '../types';
 import Button from './Button';
 
@@ -8,9 +7,17 @@ interface EventCardProps {
   event: Event;
   style?: React.CSSProperties;
   onViewDetails?: (event: Event) => void;
+  onEdit?: (event: Event) => void;
+  onDelete?: (eventId: string) => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, style, onViewDetails }) => {
+const EventCard: React.FC<EventCardProps> = ({ 
+  event, 
+  style, 
+  onViewDetails,
+  onEdit,
+  onDelete
+}) => {
   
   const formatDate = (dateStr: string, timeStr: string) => {
     const date = new Date(dateStr);
@@ -33,6 +40,28 @@ const EventCard: React.FC<EventCardProps> = ({ event, style, onViewDetails }) =>
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300" />
+        
+        {/* Admin/Creator Actions - Overlay */}
+        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {onEdit && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); onEdit(event); }}
+              className="p-2 bg-dark-surface/80 backdrop-blur-sm rounded-full text-white hover:text-neon-cyan hover:bg-dark-surface border border-dark-border transition-all shadow-lg"
+              title="Edit Event"
+            >
+              <Edit2 size={16} />
+            </button>
+          )}
+          {onDelete && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); onDelete(event.id); }}
+              className="p-2 bg-dark-surface/80 backdrop-blur-sm rounded-full text-red-400 hover:text-red-300 hover:bg-dark-surface border border-dark-border transition-all shadow-lg"
+              title="Delete Event"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Content Section */}
@@ -40,9 +69,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, style, onViewDetails }) =>
         
         {/* Header info */}
         <div className="space-y-2 mb-3">
+            <div className="flex justify-between items-start">
              <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-dark-surface text-neon-purple border border-dark-border">
                 {event.category}
             </span>
+             <span className="text-white font-bold text-sm">{event.price}</span>
+            </div>
          
           <h3 className="text-lg font-bold text-white truncate pr-2 group-hover:text-neon-purple transition-colors">
             {event.eventName}
@@ -71,7 +103,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, style, onViewDetails }) =>
                 className="text-xs h-9 px-4 w-full sm:w-auto"
                 onClick={() => onViewDetails?.(event)}
             >
-                View Events
+                View Details
             </Button>
         </div>
       </div>

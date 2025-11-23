@@ -1,19 +1,21 @@
-
 import React, { useState } from 'react';
 import EventCard from './EventCard';
-import { MOCK_EVENTS, CATEGORIES } from '../constants';
+import { CATEGORIES } from '../constants';
 import { Event } from '../types';
 
 interface EventGridProps {
+    events: Event[];
     onViewDetails?: (event: Event) => void;
+    onEdit?: (event: Event) => void;
+    onDelete?: (eventId: string) => void;
 }
 
-const EventGrid: React.FC<EventGridProps> = ({ onViewDetails }) => {
+const EventGrid: React.FC<EventGridProps> = ({ events, onViewDetails, onEdit, onDelete }) => {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const filteredEvents = selectedCategory === "All" 
-    ? MOCK_EVENTS 
-    : MOCK_EVENTS.filter(e => e.category === selectedCategory);
+    ? events 
+    : events.filter(e => e.category === selectedCategory);
 
   return (
     <section id="events" className="py-16 bg-dark-bg relative">
@@ -52,6 +54,8 @@ const EventGrid: React.FC<EventGridProps> = ({ onViewDetails }) => {
                 key={event.id} 
                 event={event} 
                 onViewDetails={onViewDetails}
+                onEdit={onEdit}
+                onDelete={onDelete}
                 style={{ 
                     animation: `fadeIn 0.5s ease-out forwards`, 
                     animationDelay: `${index * 0.1}s`,
