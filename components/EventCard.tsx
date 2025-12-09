@@ -1,7 +1,8 @@
 import React from 'react';
-import { MapPin, Calendar, Edit2, Trash2 } from 'lucide-react';
+import { MapPin, Calendar, Trash2, Heart } from 'lucide-react';
 import { Event } from '../types';
 import Button from './Button';
+import { useAuth } from '../context/AuthContext';
 
 interface EventCardProps {
   event: Event;
@@ -18,6 +19,7 @@ const EventCard: React.FC<EventCardProps> = ({
   onEdit,
   onDelete
 }) => {
+  const { user, toggleSavedEvent } = useAuth();
   
   const formatDate = (dateStr: string, timeStr: string) => {
     const date = new Date(dateStr);
@@ -26,6 +28,13 @@ const EventCard: React.FC<EventCardProps> = ({
   };
 
   const { date, time } = formatDate(event.date, event.time);
+  
+  const isSaved = user?.savedEventIds?.includes(event.id) || false;
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    toggleSavedEvent(event.id);
+  };
 
   return (
     <div 
@@ -41,17 +50,21 @@ const EventCard: React.FC<EventCardProps> = ({
         />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300" />
         
-        {/* Admin/Creator Actions - Overlay */}
-        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          {onEdit && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); onEdit(event); }}
-              className="p-2 bg-dark-surface/80 backdrop-blur-sm rounded-full text-white hover:text-neon-cyan hover:bg-dark-surface border border-dark-border transition-all shadow-lg"
-              title="Edit Event"
-            >
-              <Edit2 size={16} />
-            </button>
-          )}
+        {/* Save Button - Top Right */}
+        <button
+            onClick={handleSave}
+            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all duration-300 z-20 shadow-lg ${
+                isSaved 
+                ? 'bg-neon-purple text-white border border-neon-purple shadow-[0_0_15px_rgba(168,85,247,0.5)] scale-110' 
+                : 'bg-dark-surface/40 text-white/80 border border-white/20 hover:bg-white hover:text-neon-purple hover:border-white'
+            }`}
+            title={isSaved ? "Remove from Saved" : "Save Event"}
+        >
+            <Heart size={18} fill={isSaved ? "currentColor" : "none"} className={isSaved ? "animate-pulse" : ""} />
+        </button>
+
+        {/* Admin/Creator Actions - Overlay - Moved to Top Left to accommodate Save button */}
+        <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
           {onDelete && (
             <button 
               onClick={(e) => { e.stopPropagation(); onDelete(event.id); }}
@@ -97,7 +110,16 @@ const EventCard: React.FC<EventCardProps> = ({
         </p>
             
         {/* Action Footer */}
-        <div className="pt-4 border-t border-dark-border/30 mt-auto flex items-center justify-end">
+        <div className="pt-4 border-t border-dark-border/30 mt-auto flex items-center justify-end gap-2">
+            {onEdit && (
+                <Button 
+                    variant="secondary" 
+                    className="text-xs h-9 px-4 w-full sm:w-auto"
+                    onClick={() => onEdit(event)}
+                >
+                    Edit
+                </Button>
+            )}
             <Button 
                 variant="ghost" 
                 className="text-xs h-9 px-4 w-full sm:w-auto"
